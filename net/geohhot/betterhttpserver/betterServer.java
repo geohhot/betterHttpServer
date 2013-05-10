@@ -45,6 +45,13 @@ class betterServer {
 				String params[] = firstLine.split(" ");
 				String method = params[0];
 				String resource = params[1];
+				String getParams = "";
+				try {
+					resource = params[1].substring(0, params[1].indexOf("?"));
+					getParams = params[1].substring(params[1].indexOf("?")+1);
+				} catch (StringIndexOutOfBoundsException e) {
+
+				}
 				String protocol = params[2];
 
 				/// DEBUG
