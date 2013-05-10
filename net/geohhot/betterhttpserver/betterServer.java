@@ -22,7 +22,7 @@ class betterServer {
 		System.out.println("Better HTTP server, by geohhot");
 		System.out.println("Trying to start server...");
 		try {
-			String rootDir = root.getCanonicalPath() + "/" + "root" + "/";
+			String rootDir = root.getCanonicalPath() + "/" + "root";
 			ServerSocket serv = new ServerSocket(PORT);
 			System.out.println("Server started!");
 
@@ -47,6 +47,9 @@ class betterServer {
 				String resource = params[1];
 				String protocol = params[2];
 
+				/// DEBUG
+				//System.out.println(method + " " + resource + " " + protocol);
+
 				if ( method.equals("GET") ) {
 					// GET requests
 					if (resource.equals("/")) {
@@ -54,16 +57,20 @@ class betterServer {
 					}
 					String replyResourcePath = rootDir + resource;
 					File replyResource = new File (replyResourcePath);
+
+					/// DEBUG
+					//System.out.println("Requested resource: "+replyResourcePath);
+
 					if (!replyResource.exists()) {
 						// file does not exist
 						// return 404 error
-						out.println("HTTP/1.1 404 Not Found");
-						replyResourcePath = rootDir + notFoundResource;
+						out.println(protocol+" 404 Not Found");
+						replyResourcePath = rootDir + "/" + notFoundResource;
 						replyResource = new File (replyResourcePath);
 					} 
 					else {
 						// reply code - 200 OK
-						out.println("HTTP/1.1 200 OK");
+						out.println(protocol+" 200 OK");
 					}
 
 					String extension = replyResourcePath.substring (replyResourcePath.lastIndexOf("."));
