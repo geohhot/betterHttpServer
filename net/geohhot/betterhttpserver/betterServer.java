@@ -17,6 +17,7 @@ class betterServer {
 	private static File root = new File(new File(".").getAbsolutePath());
 	private static String[] imageExtensions = {"ico", "png", "jpg"};
 	private static String[] textExtensions = {"html", "xml", "txt"};
+	private static String[] musicExtensions = {"mp3", "mp2"};
 
 	public static void main(String[] args) {	
 		System.out.println("Better HTTP server, by geohhot");
@@ -55,11 +56,11 @@ class betterServer {
 				String protocol = params[2];
 
 				/// DEBUG
-				//System.out.println(method + " " + resource + " " + protocol);
+				System.out.println(method + " " + resource + " " + protocol);
 
 				if ( method.equals("GET") ) {
 					// GET requests
-					if (resource.equals("/")) {
+					if (resource.substring(resource.length() - 1).equals("/")) {
 						resource += "index.html";
 					}
 					String replyResourcePath = rootDir + resource;
@@ -101,14 +102,28 @@ class betterServer {
 						// requested IMAGE file
 						out.println("Content-Type: image/"+extension);
 					}
+					else if (Arrays.asList(musicExtensions).contains(extension)) {
+						// return Content Type for music
+						out.println("Content-Type: application/force-download");
+					}
 
 					out.println();
 					// starting printing resource byte by byte to output stream
+					boolean brokenPipe = false;
 					InputStream resourceInputStream = new FileInputStream(replyResource);
 					for (long i = 0; i<length; i++) {
 						byte t;
 						t = (byte)resourceInputStream.read();
-						outStream.write(t);
+						try {
+							outStream.write(t);
+						} catch (SocketException se) {
+							System.err.println("Oops... Broken pipe.");
+							brokenPipe = true;
+							break;
+						}
+					}
+					if (brokenPipe) {
+						continue;
 					}
 					out.println();
 					inc.close();
