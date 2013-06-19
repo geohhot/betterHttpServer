@@ -42,7 +42,7 @@ class betterServer {
 		try {
 			ServerSocket serv = new ServerSocket(port, 10, InetAddress.getByName(hostname));
 			System.out.println("Server started! Running on "+serv.getInetAddress()+":"+serv.getLocalPort());
-
+			System.out.println("Root directory: "+rootDir);
 			while (true) {
 				Socket inc = serv.accept();
 				InputStream inStream = inc.getInputStream();
