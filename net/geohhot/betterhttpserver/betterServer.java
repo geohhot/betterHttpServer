@@ -22,6 +22,8 @@ class betterServer {
 	private static String[] textExtensions = {"html", "xml", "txt"};
 	private static String[] musicExtensions = {"mp3", "mp2"};
 
+	private static String notFoundString = "<h1>Error 404: Not found</h1><p>The resource you were trying to get is not available</p>";
+
 	public static void main(String[] args) {	
 		System.out.println("Better HTTP server, by geohhot");
 		System.out.println("Loading config file: default.cong");
@@ -88,6 +90,14 @@ class betterServer {
 						// return 404 error
 						out.println(protocol+" 404 Not Found");
 						replyResourcePath = rootDir + "/" + notFoundResource;
+						if (! new File(replyResourcePath).exists()) {
+							// no not found file.
+							out.println();
+							out.print(notFoundString+"\n");
+							out.println();
+							inc.close();
+							continue;
+						}
 						replyResource = new File (replyResourcePath);
 					} 
 					else {
