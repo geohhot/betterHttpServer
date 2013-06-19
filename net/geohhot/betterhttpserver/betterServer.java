@@ -5,6 +5,10 @@ import java.util.*;
 import java.net.*;
 import java.text.SimpleDateFormat;
 
+// config loading stuff
+import net.geohhot.jsonLoader.*;
+import org.json.*;
+
 /**
 * Runs simple yet HTTP server
 * @author geohhot
@@ -12,7 +16,6 @@ import java.text.SimpleDateFormat;
 */
 
 class betterServer {
-	private static int PORT = 8083;
 	private static String notFoundResource = "notFound.html";
 	private static File root = new File(new File(".").getAbsolutePath());
 	private static String[] imageExtensions = {"ico", "png", "jpg"};
@@ -21,11 +24,22 @@ class betterServer {
 
 	public static void main(String[] args) {	
 		System.out.println("Better HTTP server, by geohhot");
+		System.out.println("Loading config file: default.cong");
+		JSONLoader config = new JSONLoader ("default.conf");
+		try {
+			config.loadFile();
+		} catch (Exception e) {
+			System.err.println("Err. Exception was thrown: "+e);
+			System.exit (1);
+		}
+		JSONObject root = config.getRoot();
+		String hostname = root.getString("hostname");
+		int port        = root.getInt("port");
+		String rootDir  = root.getString("root");
 		System.out.println("Trying to start server...");
 		try {
-			String rootDir = root.getCanonicalPath() + "/" + "root";
-			ServerSocket serv = new ServerSocket(PORT);
-			System.out.println("Server started!");
+			ServerSocket serv = new ServerSocket(port, 10, InetAddress.getByName(hostname));
+			System.out.println("Server started! Running on "+serv.getInetAddress()+":"+serv.getLocalPort());
 
 			while (true) {
 				Socket inc = serv.accept();
