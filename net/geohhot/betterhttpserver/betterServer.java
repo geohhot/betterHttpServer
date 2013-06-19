@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -65,6 +66,7 @@ class betterServer {
 				String params[] = firstLine.split(" ");
 				String method = params[0];
 				String resource = params[1];
+                resource = URLDecoder.decode(resource, "UTF-8");
 				String getParams = "";
 				try {
 					resource = params[1].substring(0, params[1].indexOf("?"));
