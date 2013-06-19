@@ -1,13 +1,17 @@
 package net.geohhot.betterhttpserver;
 
-import java.io.*;
-import java.util.*;
-import java.net.*;
-import java.text.SimpleDateFormat;
+// json config loader
+import net.geohhot.jsonLoader.JSONLoader;
+import org.json.JSONObject;
 
-// config loading stuff
-import net.geohhot.jsonLoader.*;
-import org.json.*;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Scanner;
 
 /**
 * Runs simple yet HTTP server
@@ -17,14 +21,13 @@ import org.json.*;
 
 class betterServer {
 	private static String notFoundResource = "notFound.html";
-	private static File root = new File(new File(".").getAbsolutePath());
 	private static String[] imageExtensions = {"ico", "png", "jpg"};
 	private static String[] textExtensions = {"html", "xml", "txt"};
 	private static String[] musicExtensions = {"mp3", "mp2"};
 
 	private static String notFoundString = "<h1>Error 404: Not found</h1><p>The resource you were trying to get is not available</p>";
 
-	public static void main(String[] args) {	
+	public static void main(String[] args) {
 		System.out.println("Better HTTP server, by geohhot");
 		System.out.println("Loading config file: default.cong");
 		JSONLoader config = new JSONLoader ("default.conf");
@@ -66,9 +69,7 @@ class betterServer {
 				try {
 					resource = params[1].substring(0, params[1].indexOf("?"));
 					getParams = params[1].substring(params[1].indexOf("?")+1);
-				} catch (StringIndexOutOfBoundsException e) {
-
-				}
+				} catch (StringIndexOutOfBoundsException e) {}
 				String protocol = params[2];
 
 				/// DEBUG
@@ -99,7 +100,7 @@ class betterServer {
 							continue;
 						}
 						replyResource = new File (replyResourcePath);
-					} 
+					}
 					else {
 						// reply code - 200 OK
 						out.println(protocol+" 200 OK");
@@ -112,7 +113,7 @@ class betterServer {
 					out.println("Content-Length: "+length);
 					// returning name of server
 					out.println("Server: Better server (by geohhot)");
-					
+
 					// returning last modified date of resource
 					SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 					out.println("Last-Modified: "+sdf.format(replyResource.lastModified()));
@@ -120,7 +121,7 @@ class betterServer {
 					if (Arrays.asList(textExtensions).contains(extension)) {
 						// requested TEXT file
 						// return Content Type
-						out.println("Content-Type: text/"+extension);						
+						out.println("Content-Type: text/"+extension);
 					}
 					else if (Arrays.asList(imageExtensions).contains(extension)) {
 						// requested IMAGE file
